@@ -11,7 +11,24 @@ import com.qst.dms.entity.DataBase;
 import com.qst.dms.entity.LogRec;
 import com.qst.dms.entity.MatchedLogRec;
 //日志业务类
+
+
+
 public class LogRecService {
+	public static boolean checkIP(String ip) {
+		if (ip != null && !ip.isEmpty()) {
+			// 正则表达式
+			String rules = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\."
+					+ "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\."
+					+ "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\."
+					+ "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
+			return ip.matches(rules);
+		}
+		System.out.println("数据有误");
+		return false;
+	}
+
+
 	// 日志数据采集
 	public LogRec inputLog() {
 		LogRec log = null;
@@ -42,9 +59,17 @@ public class LogRecService {
 			// 接收键盘输入的字符串信息
 			//scanner.nextLine();
 			String ip = scanner.nextLine();
+			while (!checkIP(ip)) {
+				System.out.println("IP地址输入有误，请重新输入");
+				ip = scanner.nextLine();
+			}
 			// 提示用户输入登录状态、登出状态
 			System.out.println("请输入登录状态:1是登录，0是登出");
 			int logType = scanner.nextInt();
+			while (logType != 1 && logType != 0) {
+				System.out.println("输入有误，请重新输入");
+				logType = scanner.nextInt();
+			}
 			// 创建日志对象
 			log = new LogRec(id, nowDate, address, type, user, ip, logType);
 		} catch (Exception e) {
