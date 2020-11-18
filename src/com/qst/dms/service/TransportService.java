@@ -1,17 +1,11 @@
 package com.qst.dms.service;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
-import com.qst.dms.entity.DataBase;
-import com.qst.dms.entity.MatchedLogRec;
-import com.qst.dms.entity.MatchedTransport;
-import com.qst.dms.entity.Transport;
+import com.qst.dms.entity.*;
 
 public class TransportService {
 	// 物流数据采集
@@ -105,6 +99,9 @@ public class TransportService {
 		}
 	}
 
+
+
+
 	// 读匹配物流信息保存，参数是集合
 	public ArrayList<MatchedTransport> readMatchedTransport() {
 		ArrayList<MatchedTransport> matchTrans = new ArrayList<>();
@@ -113,15 +110,51 @@ public class TransportService {
 				"MatchedTransports.txt"))) {
 			MatchedTransport matchTran;
 			// 循环读文件中的对象
-			while ((matchTran = (MatchedTransport) ois.readObject()) != null) {
-				// 将对象添加到泛型集合中
-				matchTrans.add(matchTran);
+//			while ((matchTran = (MatchedTransport) ois.readObject()) != null) {
+//				// 将对象添加到泛型集合中
+//				matchTrans.add(matchTran);
+//			}
+			while (true) {
+				try {
+					matchTran = (MatchedTransport)ois.readObject();
+					matchTrans.add(matchTran);
+				} catch (EOFException ex) {
+					break;
+				}
 			}
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return matchTrans;
 	}
 
+
+	public void saveAndAppendTransport(ArrayList<MatchedTransport> matchedTransports) {
+		AppendObjectOutputStream aoos = null;
+		File file = new File("MatchedTransports.txt");
+		try {
+			AppendObjectOutputStream.file = file;
+			aoos = new AppendObjectOutputStream(file);
+			for (MatchedTransport e : matchedTransports) {
+				if (e != null) {
+					aoos.writeObject(e);
+					aoos.flush();
+				}
+			}
+
+		} catch (Exception ex) {
+
+		} finally {
+			if (aoos != null) {
+				try {
+					aoos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
 	
 }

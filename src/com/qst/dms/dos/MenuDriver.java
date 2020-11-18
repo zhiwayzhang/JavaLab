@@ -89,7 +89,7 @@ public class MenuDriver {
 								transportList);
 						// 物流数据过滤
 						transAn.doFilter();
-						// 物流数据分析
+						// 物流数据分析4
 						matchedTrans = transAn.matchData();
 						System.out.println("物流数据过滤匹配完成！");
 					}
@@ -97,21 +97,27 @@ public class MenuDriver {
 					break;
 				case 3:
 					System.out.println("数据记录 中...");
+					logService.saveAndAppendMatchedLogRec(matchedLogs);
+					tranService.saveAndAppendTransport(matchedTrans);
+					System.out.println("数据记录完成！");
 					break;
 				case 4: {
 					System.out.println("显示匹配的数据：");
-					if (matchedLogs == null || matchedLogs.size() == 0) {
-						System.out.println("匹配的日志记录是0条！");
-					} else {
-						//输出匹配的日志信息
-						logService.showMatchLog(matchedLogs);
-					}
-					if (matchedTrans == null || matchedTrans.size() == 0) {
-						System.out.println("匹配的物流记录是0条！");
-					} else {
-						// 输出匹配的物流信息
-						tranService.showMatchTransport(matchedTrans);
-					}
+					ArrayList<MatchedLogRec> matchedLogRecs = new ArrayList<>();
+					matchedLogRecs = logService.readMatchedLog();
+					logService.showMatchLog(matchedLogRecs);
+//					if (matchedLogs == null || matchedLogs.size() == 0) {
+//						System.out.println("匹配的日志记录是0条！");
+//					} else {
+//						//输出匹配的日志信息
+//						logService.showMatchLog(matchedLogs);
+//					}
+//					if (matchedTrans == null || matchedTrans.size() == 0) {
+//						System.out.println("匹配的物流记录是0条！");
+//					} else {
+//						// 输出匹配的物流信息
+//						tranService.showMatchTransport(matchedTrans);
+//					}
 				}
 					break;
 				case 5:
