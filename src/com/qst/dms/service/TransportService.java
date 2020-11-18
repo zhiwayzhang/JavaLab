@@ -116,7 +116,7 @@ public class TransportService {
 //			}
 			while (true) {
 				try {
-					matchTran = (MatchedTransport)ois.readObject();
+					matchTran = (MatchedTransport) ois.readObject();
 					matchTrans.add(matchTran);
 				} catch (EOFException ex) {
 					break;
@@ -124,7 +124,7 @@ public class TransportService {
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 		return matchTrans;
 	}

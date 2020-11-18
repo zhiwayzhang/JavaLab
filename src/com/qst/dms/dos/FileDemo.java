@@ -18,8 +18,8 @@ public class FileDemo {
 		LogRecService logService = new LogRecService();
 		ArrayList<MatchedLogRec> matchLogs = new ArrayList<>();
 		matchLogs.add(new MatchedLogRec(
-				new LogRec(1001, new Date(), "青島",DataBase.GATHER, "zhangsan", "192.168.1.1", 1),
-				new LogRec(1002, new Date(), "青島", DataBase.GATHER, "zhangsan",	"192.168.1.1", 0)));
+				new LogRec(1001, new Date(), "test",DataBase.GATHER, "zhangsan", "192.168.1.1", 1),
+				new LogRec(1002, new Date(), "test", DataBase.GATHER, "zhangsan",	"192.168.1.1", 0)));
 		matchLogs.add(new MatchedLogRec(
 				new LogRec(1003, new Date(), "北京",DataBase.GATHER, "lisi", "192.168.1.6", 1), 
 				new LogRec(1004, new Date(), "北京", DataBase.GATHER, "lisi", "192.168.1.6", 0)));
@@ -27,7 +27,7 @@ public class FileDemo {
 				new LogRec(1005, new Date(), "济南",DataBase.GATHER, "wangwu", "192.168.1.89", 1),
 				new LogRec(1006, new Date(), "济南", DataBase.GATHER,	"wangwu", "192.168.1.89", 0)));
 		//保存匹配的日志信息到文件中
-		logService.saveMatchLog(matchLogs);
+		logService.saveAndAppendMatchedLogRec(matchLogs);
 		//从文件中读取匹配的日志信息
 		ArrayList<MatchedLogRec> logList = logService.readMatchedLog();
 		logService.showMatchLog(logList);
@@ -44,7 +44,7 @@ public class FileDemo {
 				new Transport(2005, new Date(), "北京",DataBase.GATHER,"sunqi","zhaokel",2),
 				new Transport(2006, new Date(), "北京",DataBase.GATHER,"fengba","zhaokel",3)));
 		//保存匹配的物流信息到文件中
-		tranService.saveMatchedTransport(matchTrans);
+		tranService.saveAndAppendTransport(matchTrans);
 		//从文件中读取匹配的物流信息
 		ArrayList<MatchedTransport> transportList = tranService.readMatchedTransport();
 		tranService.showMatchTransport(transportList);

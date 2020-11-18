@@ -169,7 +169,7 @@ public class LogRecService {
 			}
 
 		} catch (Exception ex) {
-
+			ex.printStackTrace();
 		} finally {
 			if (aoos != null) {
 				try {

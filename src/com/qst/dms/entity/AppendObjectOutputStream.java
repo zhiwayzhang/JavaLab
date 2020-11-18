@@ -13,7 +13,8 @@ public class AppendObjectOutputStream extends ObjectOutputStream {
             if (file.length() == 0) {
                 super.writeStreamHeader();
             } else {
-                this.reset();
+
+                //this.reset();
             }
         } else {
             super.writeStreamHeader();
