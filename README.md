@@ -8,43 +8,6 @@ A project base on WHUT Java Lab
 ├── JavaLab.iml
 ├── MatchedLogs.txt
 ├── MatchedTransports.txt
-├── out
-│   └── production
-│       └── JavaLab
-│           ├── com
-│           │   └── qst
-│           │       └── dms
-│           │           ├── db
-│           │           │   └── DBUtil.class
-│           │           ├── dos
-│           │           │   ├── DBDemo.class
-│           │           │   ├── EntityDataDemo.class
-│           │           │   ├── FileDemo.class
-│           │           │   ├── LogRecDemo.class
-│           │           │   ├── MenuDriver.class
-│           │           │   ├── MySQLDemo.class
-│           │           │   └── TransportDemo.class
-│           │           ├── entity
-│           │           │   ├── AppendObjectOutputStream.class
-│           │           │   ├── DataBase.class
-│           │           │   ├── LogRec.class
-│           │           │   ├── MatchedLogRec.class
-│           │           │   ├── MatchedTransport.class
-│           │           │   └── Transport.class
-│           │           ├── exception
-│           │           │   └── DataAnalyseException.class
-│           │           ├── gather
-│           │           │   ├── DataFilter.class
-│           │           │   ├── IDataAnalyse.class
-│           │           │   ├── LogRecAnalyse.class
-│           │           │   └── TransportAnalyse.class
-│           │           ├── service
-│           │           │   ├── LogRecService.class
-│           │           │   └── TransportService.class
-│           │           └── util
-│           │               └── Config.class
-│           └── config
-│               └── mysql.properties
 └── src
     ├── com
     │   └── qst
