@@ -99,12 +99,18 @@ public class MenuDriver {
 					System.out.println("数据记录 中...");
 					logService.saveAndAppendMatchedLogRec(matchedLogs);
 					tranService.saveAndAppendTransport(matchedTrans);
+					logService.saveMatchedLogToDB(matchedLogs);
+					tranService.saveAndAppendTransport(matchedTrans);
 					System.out.println("数据记录完成！");
 					break;
 				case 4: {
 					System.out.println("显示匹配的数据：");
 					ArrayList<MatchedLogRec> matchedLogRecs = new ArrayList<>();
+					System.out.println("Data From Local File:");
 					matchedLogRecs = logService.readMatchedLog();
+					logService.showMatchLog(matchedLogRecs);
+					System.out.println("Data From Database:");
+					matchedLogRecs = logService.readMatchedLogFromDB();
 					logService.showMatchLog(matchedLogRecs);
 //					if (matchedLogs == null || matchedLogs.size() == 0) {
 //						System.out.println("匹配的日志记录是0条！");

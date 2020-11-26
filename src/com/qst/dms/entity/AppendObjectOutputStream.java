@@ -6,15 +6,14 @@ public class AppendObjectOutputStream extends ObjectOutputStream {
     public static File file = null;
     public AppendObjectOutputStream(File file) throws IOException {
         super(new FileOutputStream(file, true));
-        System.out.println("Initial Successful");
+        //System.out.println("Initial Successful"); // for test
     }
     public void writeStreamHeader() throws IOException {
         if (file != null) {
             if (file.length() == 0) {
                 super.writeStreamHeader();
             } else {
-
-                //this.reset();
+                // do nothing
             }
         } else {
             super.writeStreamHeader();

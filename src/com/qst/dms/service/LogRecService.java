@@ -1,9 +1,15 @@
 package com.qst.dms.service;
 import java.io.*;
+import java.security.Timestamp;
+import java.security.cert.CertPath;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import com.mysql.cj.log.Log;
+import com.qst.dms.db.DBUtil;
 import com.qst.dms.entity.*;
 //日志业务类
 
@@ -182,4 +188,72 @@ public class LogRecService {
 
 	}
 
+	public ArrayList<MatchedLogRec> readMatchedLogFromDB() {
+		ArrayList<MatchedLogRec> matchedLogRecs = new ArrayList<MatchedLogRec>();
+		DBUtil db = new DBUtil();
+		try {
+			db.getConnection();
+			String sql = "SELECT i.id,i.time,i.address,i.type,i.username,i.ip,i.logtype,"
+					   + "o.id,o.time,o.address,o.type,o.username,o.ip,o.logtype "
+					   + "FROM matched_logrec m,gather_logrec i,gather_logrec o "
+					   + "WHERE m.loginid=i.id AND m.logoutid=o.id";
+			ResultSet rs = db.executeQuery(sql, null);
+			while (rs.next()) {
+				LogRec login = new LogRec(rs.getInt(1), rs.getDate(2),
+						rs.getString(3), rs.getInt(4), rs.getString(5),
+						rs.getString(6), rs.getInt(7));
+				LogRec logout = new LogRec(rs.getInt(8), rs.getDate(9),
+						rs.getString(10), rs.getInt(11), rs.getString(12),
+						rs.getString(13), rs.getInt(14));
+				MatchedLogRec matchedLogRec = new MatchedLogRec(login, logout);
+				matchedLogRecs.add(matchedLogRec);
+			}
+			db.closeAll();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (SQLException throwables) {
+			throwables.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return matchedLogRecs;
+	}
+
+	public void saveMatchedLogToDB(ArrayList<MatchedLogRec> matchedLogRecs) {
+		DBUtil db = new DBUtil();
+		try {
+			// get access
+			db.getConnection();
+			for (MatchedLogRec matchedLogRec : matchedLogRecs) {
+				LogRec login = matchedLogRec.getLogin();
+				LogRec logout = matchedLogRec.getLogout();
+				String sql_save = "INSERT INTO gather_logrec(id,time,address,type,username,ip,logtype) VALUES(?,?,?,?,?,?,?)";
+				Object[] temp = new Object[] {
+						login.getId(), login.getTime(), login.getAddress(),
+						login.getType(),login.getUser(), login.getIp(),
+						login.getLogType()
+				};
+				db.executeUpdate(sql_save, temp);
+				CertPath certPath = null;
+				temp = new Object[] {
+						logout.getId(), logout.getTime(), logout.getAddress(),
+						logout.getType(), logout.getUser(), logout.getIp(),
+						logout.getLogType()
+				};
+				db.executeUpdate(sql_save, temp);
+				String sql_save_log = "INSERT INTO matched_logrec(loginid,logoutid) VALUES(?,?)";
+				temp = new Object[] {
+						login.getId(), logout.getId()
+				};
+				db.executeUpdate(sql_save_log, temp);
+			}
+			db.closeAll();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
+
