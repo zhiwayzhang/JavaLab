@@ -1,9 +1,7 @@
 package com.qst.dms.service;
 import java.io.*;
-import java.security.Timestamp;
 import java.security.cert.CertPath;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -231,14 +229,14 @@ public class LogRecService {
 				LogRec logout = matchedLogRec.getLogout();
 				String sql_save = "INSERT INTO gather_logrec(id,time,address,type,username,ip,logtype) VALUES(?,?,?,?,?,?,?)";
 				Object[] temp = new Object[] {
-						login.getId(), login.getTime(), login.getAddress(),
+						login.getId(), new Timestamp(login.getTime().getTime()), login.getAddress(),
 						login.getType(),login.getUser(), login.getIp(),
 						login.getLogType()
 				};
 				db.executeUpdate(sql_save, temp);
 				CertPath certPath = null;
 				temp = new Object[] {
-						logout.getId(), logout.getTime(), logout.getAddress(),
+						logout.getId(), new Timestamp(logout.getTime().getTime()), logout.getAddress(),
 						logout.getType(), logout.getUser(), logout.getIp(),
 						logout.getLogType()
 				};
@@ -253,6 +251,23 @@ public class LogRecService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public ResultSet readLogResult() {
+		DBUtil db = new DBUtil();
+		ResultSet rs=null;
+		try {
+			// 获取数据库链接
+			Connection conn=db.getConnection();
+			// 查询匹配日志，设置ResultSet可以使用除了next()之外的方法操作结果集
+			Statement st=conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+
+			String sql = "SELECT * from gather_logrec";
+			rs = st.executeQuery(sql);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
 	}
 
 }

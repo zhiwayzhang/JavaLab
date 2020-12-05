@@ -138,7 +138,7 @@ public class MenuDriver {
 
 			}
 		} catch (Exception e) {
-			System.out.println("输入的数据不合法！");
+			e.printStackTrace();
 		}
 	}
 }
