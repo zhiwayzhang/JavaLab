@@ -2,7 +2,10 @@ package com.qst.dms.service;
 
 import java.io.*;
 import java.security.cert.CertPath;
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -171,17 +174,17 @@ public class TransportService {
 				Transport receive = matchedTransport.getReceive();
 				String sql = "INSERT INTO gather_transport(id,time,address,type,handler,reciver,transporttype) VALUES(?,?,?,?,?,?,?)";
 				Object[] temp = new Object[] {
-						send.getId(), send.getTime(), send.getAddress(), send.getType(),
+						send.getId(), new Timestamp(send.getTime().getTime()), send.getAddress(), send.getType(),
 						send.getHandler(), send.getReciver(), send.getTransportType()
 				};
 				db.executeUpdate(sql, temp);
 				temp = new Object[] {
-						trans.getId(), trans.getTime(), trans.getAddress(), trans.getType(),
+						trans.getId(), new Timestamp(trans.getTime().getTime()), trans.getAddress(), trans.getType(),
 						trans.getHandler(), trans.getReciver(), trans.getTransportType()
 				};
 				db.executeUpdate(sql, temp);
 				temp = new Object[] {
-						receive.getId(), receive.getTime(), receive.getAddress(), receive.getType(),
+						receive.getId(), new Timestamp(receive.getTime().getTime()), receive.getAddress(), receive.getType(),
 						receive.getHandler(), receive.getReciver(), receive.getTransportType()
 				};
 				db.executeUpdate(sql,temp);
@@ -227,4 +230,22 @@ public class TransportService {
 		}
 		return matchedTransports;
 	}
+
+	public ResultSet readTransResult() {
+		DBUtil db = new DBUtil();
+		ResultSet rs=null;
+		try {
+			// 获取数据库链接
+			Connection conn = db.getConnection();
+			// 查询匹配日志，设置ResultSet可以使用除了next()之外的方法操作结果集
+			Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+
+			String sql = "SELECT * from gather_transport";
+			rs = st.executeQuery(sql);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+
 }
