@@ -14,6 +14,7 @@ import com.qst.dms.service.TransportService;
 public class DBDemo {
 	public static void main(String[] args) {
 		// 创建一个日志业务类
+
 		LogRecService logService = new LogRecService();
 		ArrayList<MatchedLogRec> matchLogs = new ArrayList<>();
 		matchLogs.add(new MatchedLogRec(
@@ -26,7 +27,7 @@ public class DBDemo {
 				new LogRec(1005, new Date(), "济南",DataBase.GATHER, "wangwu", "192.168.1.89", 1),
 				new LogRec(1006, new Date(), "济南", DataBase.GATHER,	"wangwu", "192.168.1.89", 0)));
 		//保存匹配的日志信息到数据库中
-		//logService.saveMatchedLogToDB(matchLogs);
+		logService.saveMatchedLogToDB(matchLogs);
 		//从数据库中读取匹配的日志信息
 		ArrayList<MatchedLogRec> logList = logService.readMatchedLogFromDB();
 		logService.showMatchLog(logList);
@@ -43,7 +44,7 @@ public class DBDemo {
 				new Transport(2005, new Date(), "北京",DataBase.GATHER,"sunqi","w",2),
 				new Transport(2006, new Date(), "北京",DataBase.GATHER,"fengba","w",3)));
 		//保存匹配的物流信息到数据库中
-		//tranService.saveMatchTransportToDB(matchTrans);
+		tranService.saveMatchTransportToDB(matchTrans);
 		//从数据库中中读取匹配的物流信息
 		ArrayList<MatchedTransport> transportList = tranService.readMatchedTransportFromDB();
 		tranService.showMatchTransport(transportList);
