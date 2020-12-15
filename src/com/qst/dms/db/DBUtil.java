@@ -1,10 +1,6 @@
 package com.qst.dms.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 import com.qst.dms.util.Config;
 
@@ -112,4 +108,28 @@ public class DBUtil {
         }
         return num;
     }
+
+    /**
+     * auto add key value
+     */
+    public int executeSQLAndReturnPrimaryKey(String preparedSql, Object[] param) {
+        try {
+            pstmt = conn.prepareStatement(preparedSql, Statement.RETURN_GENERATED_KEYS);
+            if (param != null) {
+                for (int i = 0; i < param.length; i++) {
+                    pstmt.setObject(i+1,param[i]);
+                }
+            }
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+
 }

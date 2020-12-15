@@ -172,22 +172,28 @@ public class TransportService {
 				Transport send = matchedTransport.getSend();
 				Transport trans = matchedTransport.getTrans();
 				Transport receive = matchedTransport.getReceive();
-				String sql = "INSERT INTO gather_transport(id,time,address,type,handler,reciver,transporttype) VALUES(?,?,?,?,?,?,?)";
+				String sql = "INSERT INTO gather_transport(time,address,type,handler,reciver,transporttype) VALUES(?,?,?,?,?,?)";
 				Object[] temp = new Object[] {
-						send.getId(), new Timestamp(send.getTime().getTime()), send.getAddress(), send.getType(),
+						new Timestamp(send.getTime().getTime()), send.getAddress(), send.getType(),
 						send.getHandler(), send.getReciver(), send.getTransportType()
 				};
-				db.executeUpdate(sql, temp);
+				int sendId = db.executeSQLAndReturnPrimaryKey(sql, temp);
+				send.setId(sendId);
+				//db.executeUpdate(sql, temp);
 				temp = new Object[] {
-						trans.getId(), new Timestamp(trans.getTime().getTime()), trans.getAddress(), trans.getType(),
+						new Timestamp(trans.getTime().getTime()), trans.getAddress(), trans.getType(),
 						trans.getHandler(), trans.getReciver(), trans.getTransportType()
 				};
-				db.executeUpdate(sql, temp);
+				int transId = db.executeSQLAndReturnPrimaryKey(sql, temp);
+				trans.setId(transId);
+				//db.executeUpdate(sql, temp);
 				temp = new Object[] {
-						receive.getId(), new Timestamp(receive.getTime().getTime()), receive.getAddress(), receive.getType(),
+						new Timestamp(receive.getTime().getTime()), receive.getAddress(), receive.getType(),
 						receive.getHandler(), receive.getReciver(), receive.getTransportType()
 				};
-				db.executeUpdate(sql,temp);
+				int receiveId = db.executeSQLAndReturnPrimaryKey(sql, temp);
+				receive.setId(receiveId);
+				//db.executeUpdate(sql,temp);
 				sql = "INSERT INTO matched_transport(sendid,transid,receiveid) VALUES(?,?,?)";
 				Object[] object = new Object[] {
 						send.getId(), trans.getId(), receive.getId()

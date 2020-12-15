@@ -219,6 +219,8 @@ public class LogRecService {
 		return matchedLogRecs;
 	}
 
+
+
 	public void saveMatchedLogToDB(ArrayList<MatchedLogRec> matchedLogRecs) {
 		DBUtil db = new DBUtil();
 		try {
@@ -227,20 +229,24 @@ public class LogRecService {
 			for (MatchedLogRec matchedLogRec : matchedLogRecs) {
 				LogRec login = matchedLogRec.getLogin();
 				LogRec logout = matchedLogRec.getLogout();
-				String sql_save = "INSERT INTO gather_logrec(id,time,address,type,username,ip,logtype) VALUES(?,?,?,?,?,?,?)";
+				String sql_save = "INSERT INTO gather_logrec(time,address,type,username,ip,logtype) VALUES(?,?,?,?,?,?)";
 				Object[] temp = new Object[] {
-						login.getId(), new Timestamp(login.getTime().getTime()), login.getAddress(),
+						new Timestamp(login.getTime().getTime()), login.getAddress(),
 						login.getType(),login.getUser(), login.getIp(),
 						login.getLogType()
 				};
-				db.executeUpdate(sql_save, temp);
+				int loginKey = db.executeSQLAndReturnPrimaryKey(sql_save, temp);
+				//db.executeUpdate(sql_save, temp);
+				login.setId(loginKey);
 				CertPath certPath = null;
 				temp = new Object[] {
-						logout.getId(), new Timestamp(logout.getTime().getTime()), logout.getAddress(),
+						new Timestamp(logout.getTime().getTime()), logout.getAddress(),
 						logout.getType(), logout.getUser(), logout.getIp(),
 						logout.getLogType()
 				};
-				db.executeUpdate(sql_save, temp);
+				int logoutKey = db.executeSQLAndReturnPrimaryKey(sql_save, temp);
+				//db.executeUpdate(sql_save, temp);
+				logout.setId(logoutKey);
 				String sql_save_log = "INSERT INTO matched_logrec(loginid,logoutid) VALUES(?,?)";
 				temp = new Object[] {
 						login.getId(), logout.getId()
