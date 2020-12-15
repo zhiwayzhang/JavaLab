@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 
 import java.sql.Statement;
 import com.qst.dms.db.DBUtil;
+import com.qst.dms.entity.MD5;
 import com.qst.dms.entity.User;
 
 public class UserService {
@@ -13,6 +14,7 @@ public class UserService {
 		DBUtil db = new DBUtil();
 		User user = null;
 		try {
+
 			// 获取数据库链接
 			db.getConnection();
 			// 使用PreparedStatement发送sql语句
@@ -41,6 +43,7 @@ public class UserService {
 	public boolean saveUser(User user) {
 		// 定义一个布尔返回值，初始值为false
 		boolean r = false;
+		user.setPassword(MD5.getMD5(user.getPassword()));
 		DBUtil db = new DBUtil();
 		try {
 			// 获取数据库连接

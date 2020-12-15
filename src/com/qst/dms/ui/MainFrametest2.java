@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -81,6 +82,8 @@ public class MainFrametest2 extends JFrame {
 	private LogRecService logRecService;
 	// 声明物流业务对象
 	private TransportService transportService;
+
+	private String LocalIp="1.1.1.1";
 
 	// 构造方法
 	public MainFrametest2() {
@@ -203,7 +206,7 @@ public class MainFrametest2 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// 显示消息对话框
 				JOptionPane.showMessageDialog(null,
-						"开发人：", "自行补充",
+						"开发人：", "Zhiway Zhang",
 						JOptionPane.WARNING_MESSAGE);
 			}
 		});
@@ -265,12 +268,12 @@ public class MainFrametest2 extends JFrame {
 			pLog.add(pLogId);
 			pLogId.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-			lblLogId = new JLabel("日志ID：");
-			pLogId.add(lblLogId);
-
-			txtLogId = new JTextField();
-			txtLogId.setPreferredSize(new Dimension(100, 20));
-			pLogId.add(txtLogId);
+//			lblLogId = new JLabel("日志ID：");
+//			pLogId.add(lblLogId);
+//
+//			txtLogId = new JTextField();
+//			txtLogId.setPreferredSize(new Dimension(100, 20));
+//			pLogId.add(txtLogId);
 
 			pName = new JPanel();
 			pLog.add(pName);
@@ -299,7 +302,27 @@ public class MainFrametest2 extends JFrame {
 			lblIP = new JLabel("登录IP：");
 			pIP.add(lblIP);
 
-			txtIP = new JTextField();
+
+			// auto add ip address
+			// to do
+//		public class Main {
+//			public static void main(String[] args)
+//					throws Exception {
+//				InetAddress addr = InetAddress.getLocalHost();
+//				System.out.println("Local HostAddress:
+//						"+addr.getHostAddress());
+//						String hostname = addr.getHostName();
+//				System.out.println("Local host name: "+hostname);
+//			}
+//		}
+
+			try {
+				Inet4Address address = (Inet4Address) Inet4Address.getLocalHost();
+				LocalIp = address.getHostAddress();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			txtIP = new JTextField(LocalIp);
 			txtIP.setPreferredSize(new Dimension(100, 20));
 			pIP.add(txtIP);
 
@@ -343,12 +366,12 @@ public class MainFrametest2 extends JFrame {
 		pTransId = new JPanel();
 		pTran.add(pTransId);
 
-		lblTransId = new JLabel("物流ID：");
-		pTransId.add(lblTransId);
-
-		txtTransId = new JTextField();
-		txtTransId.setPreferredSize(new Dimension(100, 20));
-		pTransId.add(txtTransId);
+//		lblTransId = new JLabel("物流ID：");
+//		pTransId.add(lblTransId);
+//
+//		txtTransId = new JTextField();
+//		txtTransId.setPreferredSize(new Dimension(100, 20));
+//		pTransId.add(txtTransId);
 
 		pAdress = new JPanel();
 		pTran.add(pAdress);
@@ -385,9 +408,12 @@ public class MainFrametest2 extends JFrame {
 
 		lblTranStatus = new JLabel("物流状态：");
 		pTranStatus.add(lblTranStatus);
-
+		cmbTanStatus = new JComboBox();
 		String[] tranStatus = new String[] { "发货中", "送货中", "已签收" };
-
+		cmbTanStatus.addItem(tranStatus[0]);
+		cmbTanStatus.addItem(tranStatus[1]);
+		cmbTanStatus.addItem(tranStatus[2]);
+		pTranStatus.add(cmbTanStatus);
 		pTranButton = new JPanel();
 		pTran.add(pTranButton);
 
@@ -413,7 +439,7 @@ public class MainFrametest2 extends JFrame {
 		// 数据采集的事件处理方法
 		public void actionPerformed(ActionEvent e) {
 			// 获取日志ID
-			int id = Integer.parseInt(txtLogId.getText().trim());
+			//int id = Integer.parseInt(txtLogId.getText().trim());
 			// 创建当前时间
 			Date time = new Date();
 			// 获取地址栏地址
@@ -427,7 +453,7 @@ public class MainFrametest2 extends JFrame {
 			// 设置日志类型
 			int logType = rbLogin.isSelected() ? LogRec.LOG_IN : LogRec.LOG_OUT;
 			// 将数据封装到日志对象
-			log = new LogRec(id, time, adress, type, user, ip, logType);
+			log = new LogRec(1, time, adress, type, user, ip, logType);
 			// 将日志对象添加到日志列表
 			logList.add(log);
 			// 显示对话框
@@ -441,7 +467,7 @@ public class MainFrametest2 extends JFrame {
 		// 数据采集的事件处理方法
 		public void actionPerformed(ActionEvent e) {
 			// 获取物流ID
-			int id = Integer.parseInt(txtTransId.getText().trim());
+			//int id = Integer.parseInt(txtTransId.getText().trim());
 			// 创建当前时间
 			Date time = new Date();
 			// 获取地址栏地址
@@ -455,7 +481,7 @@ public class MainFrametest2 extends JFrame {
 			// 设置物流类型
 			int transportType = cmbTanStatus.getSelectedIndex() + 1;
 			// 将数据包装成物流对象
-			trans = new Transport(id, time, adress, type, handler, reciver,
+			trans = new Transport(1, time, adress, type, handler, reciver,
 					transportType);
 			// 将物流对象放入物流列表
 			transList.add(trans);
@@ -471,7 +497,7 @@ public class MainFrametest2 extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			txtName.setText("");
 			txtLocation.setText("");
-			txtIP.setText("");
+			txtIP.setText(LocalIp);
 			txtAdress.setText("");
 			txtHandler.setText("");
 			txtReceiver.setText("");

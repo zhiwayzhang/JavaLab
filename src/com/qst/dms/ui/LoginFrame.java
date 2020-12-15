@@ -81,6 +81,7 @@ public class LoginFrame extends JFrame {
             // 获取用户输入的数据
             String userName = txtName.getText().trim();
             String password = new String(txtPwd.getPassword());
+            password = MD5.getMD5(password);
             User tempUser = userService.findUserByName(userName);
             if (tempUser == null) {
                 JOptionPane.showMessageDialog(null, "无此用户,建议先注册","Login Failed",JOptionPane.ERROR_MESSAGE);
