@@ -6,8 +6,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,8 +45,10 @@ import com.qst.dms.entity.MatchedTransport;
 import com.qst.dms.entity.Transport;
 import com.qst.dms.gather.LogRecAnalyse;
 import com.qst.dms.gather.TransportAnalyse;
+import com.qst.dms.net.DmsNetServer;
 import com.qst.dms.service.LogRecService;
 import com.qst.dms.service.TransportService;
+import com.qst.dms.util.Config;
 
 //主窗口
 public class MainFrametest2 extends JFrame {
@@ -83,12 +89,16 @@ public class MainFrametest2 extends JFrame {
 	// 声明物流业务对象
 	private TransportService transportService;
 
+	private String serverIP;
+
 	private String LocalIp="1.1.1.1";
 
 	// 构造方法
 	public MainFrametest2() {
 		// 调用父类的构造方法
 		super("Q-DMS系统客户端");
+
+		serverIP = Config.getValue("serverIP");
 
 		// 设置窗体的icon
 		ImageIcon icon = new ImageIcon("images/dms.png");
@@ -164,6 +174,7 @@ public class MainFrametest2 extends JFrame {
 		menuOperate.add(miSave);
 
 		miSend = new JMenuItem("发送数据");
+		miSend.addActionListener(new SendDataListener());
 		menuOperate.add(miSend);
 
 		miShow = new JMenuItem("显示数据");
@@ -251,16 +262,59 @@ public class MainFrametest2 extends JFrame {
 
 		ImageIcon sendIcon = new ImageIcon("images/sendData.png");
 		btnSend = new JButton("发送数据", sendIcon);
-		btnSend.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
+		btnSend.addActionListener(new SendDataListener());
 		toolBar.add(btnSend);
 
 		ImageIcon showIcon = new ImageIcon("images/showData.png");
 		btnShow = new JButton("显示数据", showIcon);
 		btnShow.addActionListener(new ShowDataListener());
 		toolBar.add(btnShow);
+	}
+
+	private class SendDataListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				System.out.println(matchedLogs.size());
+				if (matchedLogs != null && matchedLogs.size() > 0) {
+					Socket logSocket = new Socket(serverIP, 6666);
+					ObjectOutputStream logOutputStream = new ObjectOutputStream(logSocket.getOutputStream());
+					logOutputStream.writeObject(matchedLogs);
+					logOutputStream.flush();
+					logOutputStream.close();
+
+					matchedLogs.clear();
+					logList.clear();
+
+					JOptionPane.showMessageDialog(null, "匹配的日志数据已发送到服务器","提示",JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "没有匹配到日志数据","提示",JOptionPane.WARNING_MESSAGE);
+				}
+
+				if (matchedTrans != null && matchedTrans.size() > 0) {
+					Socket logSocket = new Socket(serverIP, 6668);
+					ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+							logSocket.getOutputStream()
+					);
+					objectOutputStream.writeObject(matchedTrans);
+					objectOutputStream.flush();
+					objectOutputStream.close();
+
+					matchedTrans.clear();
+					transList.clear();
+					JOptionPane.showMessageDialog(null, "匹配的物流数据已发送到服务器","提示",JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "没有匹配到物流数据","提示",JOptionPane.WARNING_MESSAGE);
+				}
+
+			} catch (UnknownHostException unknownHostException) {
+				unknownHostException.printStackTrace();
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
+			}
+
+
+		}
 	}
 
 	// 初始化日志数据采集界面的方法
@@ -559,13 +613,19 @@ public class MainFrametest2 extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			
 			// 补充数据保存的事件处理方法
-			
+//			if (matchedLogs != null && matchedLogs.size() > 0) {
+//				logRecService.saveMatchLog(matchedLogs);
+//				logList.clear();
+//
+//			}
 			// 日志信息
 			//若保存成功，弹出提示框：匹配的日志数据以保存到文件和数据库中！",
 			//若没有保存成功，则弹出相应的告警提示框
 
 			try {
-				logRecService.saveMatchedLogToDB(matchedLogs);
+				logRecService.saveAndAppendMatchedLogRec(matchedLogs);
+				logList.clear();
+				//logRecService.saveMatchedLogToDB(matchedLogs);
 			} catch (Exception exception) {
 				JOptionPane.showMessageDialog(null, "日志信息没有保存成功！", "告警",
 						JOptionPane.INFORMATION_MESSAGE);
@@ -578,7 +638,9 @@ public class MainFrametest2 extends JFrame {
 			//若保存成功，弹出提示框：匹配的物流数据以保存到文件和数据库中！",
 			//若没有保存成功，则弹出相应的告警提示框
 			try {
-				transportService.saveMatchTransportToDB(matchedTrans);
+				transportService.saveAndAppendTransport(matchedTrans);
+				transList.clear();
+				//transportService.saveMatchTransportToDB(matchedTrans);
 			} catch (Exception exception) {
 				JOptionPane.showMessageDialog(null, "物流信息没有保存成功！", "告警",
 						JOptionPane.INFORMATION_MESSAGE);
@@ -633,6 +695,7 @@ public class MainFrametest2 extends JFrame {
 	}
 
 	public static void main(String[] args) {
+		new DmsNetServer();
 		new MainFrametest2();
 	}
 }

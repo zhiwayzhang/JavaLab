@@ -1,6 +1,7 @@
 package com.qst.dms.ui;
 
 import com.qst.dms.entity.*;
+import com.qst.dms.net.DmsNetServer;
 import com.qst.dms.service.LogRecService;
 import com.qst.dms.service.TransportService;
 import com.qst.dms.service.UserService;
@@ -88,6 +89,7 @@ public class LoginFrame extends JFrame {
             } else {
                 if (tempUser.getPassword().equals(password)) {
                     JOptionPane.showMessageDialog(null,"Login Success！","Welcome",JOptionPane.PLAIN_MESSAGE);
+                    new DmsNetServer();
                     new MainFrametest2();
                 } else {
                     JOptionPane.showMessageDialog(null,"Wrong Password","Login Failed!",JOptionPane.ERROR_MESSAGE);
