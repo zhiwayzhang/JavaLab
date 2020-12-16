@@ -138,7 +138,7 @@ public class MainFrametest2 extends JFrame {
 		initLogGatherGUI();
 		// 初始化物流数据采集界面
 		initTransGatherGUI();
-
+		new UpdateTableThread().start();
 		// 设置窗体初始可见
 		this.setVisible(true);
 		// 设置窗体初始最大化
@@ -147,8 +147,6 @@ public class MainFrametest2 extends JFrame {
 		this.setLocationRelativeTo(null);
 		// 设置默认的关闭按钮操作为退出程序
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		//new UpdateTableThread().start();
-		new UpdateTableThread().run();
 
 	}
 
@@ -197,6 +195,7 @@ public class MainFrametest2 extends JFrame {
 				}
 			}
 		});
+		//logList.clear();
 		menuOperate.add(miExit);
 
 		menuHelp = new JMenu("帮助");
@@ -497,13 +496,16 @@ public class MainFrametest2 extends JFrame {
 	// 线程类
 	private class UpdateTableThread extends Thread {
 		public void run() {
-			showPane.removeAll();
-			flushMatchedLogTable();
-			flushMatchedTransTable();
-			try {
-				Thread.sleep(10*1000);
-			} catch (Exception e) {
-				e.printStackTrace();
+			while(true) {
+				showPane.removeAll();
+				flushMatchedLogTable();
+				flushMatchedTransTable();
+				System.out.println("this is a test");
+				try {
+					Thread.sleep(1*10*1000);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -624,7 +626,8 @@ public class MainFrametest2 extends JFrame {
 
 			try {
 				logRecService.saveAndAppendMatchedLogRec(matchedLogs);
-				logList.clear();
+				//logList.clear();
+				matchedLogs.clear();
 				//logRecService.saveMatchedLogToDB(matchedLogs);
 			} catch (Exception exception) {
 				JOptionPane.showMessageDialog(null, "日志信息没有保存成功！", "告警",
@@ -695,7 +698,7 @@ public class MainFrametest2 extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new DmsNetServer();
+		//new DmsNetServer();
 		new MainFrametest2();
 	}
 }
