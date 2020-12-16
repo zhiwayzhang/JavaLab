@@ -137,6 +137,9 @@ public class MainFrametest2 extends JFrame {
 		this.setLocationRelativeTo(null);
 		// 设置默认的关闭按钮操作为退出程序
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		//new UpdateTableThread().start();
+		new UpdateTableThread().run();
+
 	}
 
 	// 初始化菜单的方法
@@ -211,6 +214,8 @@ public class MainFrametest2 extends JFrame {
 			}
 		});
 		menuHelp.add(miAbout);
+
+
 	}
 
 	// 初始化工具栏的方法
@@ -434,6 +439,21 @@ public class MainFrametest2 extends JFrame {
 		}
 	}
 
+
+	// 线程类
+	private class UpdateTableThread extends Thread {
+		public void run() {
+			showPane.removeAll();
+			flushMatchedLogTable();
+			flushMatchedTransTable();
+			try {
+				Thread.sleep(10*1000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	// 日志数据采集监听类
 	private class GatherLogListener implements ActionListener {
 		// 数据采集的事件处理方法
@@ -584,6 +604,7 @@ public class MainFrametest2 extends JFrame {
 			flushMatchedLogTable();
 			// 刷新物流信息表
 			flushMatchedTransTable();
+			//new UpdateTableThread().start();
 		}
 	}
 
@@ -613,6 +634,5 @@ public class MainFrametest2 extends JFrame {
 
 	public static void main(String[] args) {
 		new MainFrametest2();
-
 	}
 }
