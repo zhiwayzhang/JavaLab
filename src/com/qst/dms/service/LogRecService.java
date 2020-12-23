@@ -268,8 +268,10 @@ public class LogRecService {
 			// 查询匹配日志，设置ResultSet可以使用除了next()之外的方法操作结果集
 			Statement st=conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
 
-			String sql = "SELECT * from gather_logrec";
+			String sql = "SELECT i.username,i.time,o.time,i.address FROM matched_logrec m,gather_logrec i,gather_logrec o WHERE m.loginid=i.id AND m.logoutid=o.id";
 			rs = st.executeQuery(sql);
+
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

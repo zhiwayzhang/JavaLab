@@ -669,7 +669,6 @@ public class MainFrametest2 extends JFrame {
 			flushMatchedLogTable();
 			// 刷新物流信息表
 			flushMatchedTransTable();
-			//new UpdateTableThread().start();
 		}
 	}
 
@@ -698,7 +697,7 @@ public class MainFrametest2 extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		//new DmsNetServer();
+		new DmsNetServer();
 		new MainFrametest2();
 	}
 }
