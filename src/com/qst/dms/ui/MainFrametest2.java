@@ -7,15 +7,19 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.sql.rowset.CachedRowSet;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -378,7 +382,7 @@ public class MainFrametest2 extends JFrame {
 				Inet4Address address = (Inet4Address) Inet4Address.getLocalHost();
 				LocalIp = address.getHostAddress();
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			txtIP = new JTextField(LocalIp);
 			txtIP.setPreferredSize(new Dimension(100, 20));
@@ -500,7 +504,7 @@ public class MainFrametest2 extends JFrame {
 				showPane.removeAll();
 				flushMatchedLogTable();
 				flushMatchedTransTable();
-				System.out.println("this is a test");
+				//System.out.println("this is a test");
 				try {
 					Thread.sleep(1*10*1000);
 				} catch (Exception e) {
@@ -673,10 +677,27 @@ public class MainFrametest2 extends JFrame {
 	}
 
 	// 刷新日志选项卡，显示日志信息表格
-	private void flushMatchedLogTable() {
+	private void flushMatchedLogTable()  {
 		// 创建tableModel，通过标志为区分日志和物流：1，日志；0，物流
+		ObjectInputStream logInputStream;
+		CachedRowSet crs = null;
+		ResultSet rt = null;
+		try {
+			Socket logSocket = new Socket(serverIP, 6667);
+			logInputStream = new ObjectInputStream(logSocket.getInputStream());
+			crs = (CachedRowSet) logInputStream.readObject();
+			rt = crs.getOriginal();
+			logInputStream.close();
+		} catch (Exception e) {
+			System.out.println("Failed");
+		}
+
 		MatchedTableModel logModel = new MatchedTableModel(
-				logRecService.readLogResult(), 1);
+				rt, 1
+		);
+
+//		MatchedTableModel logModel = new MatchedTableModel(
+//				logRecService.readLogResult(), 1);
 		// 使用tableModel创建JTable
 		JTable logTable = new JTable(logModel);
 		// 通过JTable对象创建JScrollPane，显示数据
@@ -688,9 +709,23 @@ public class MainFrametest2 extends JFrame {
 	// 刷新物流选项卡，显示物流信息表格
 	private void flushMatchedTransTable() {
 		//显示物流数据表格
+		ObjectInputStream TransInputStream;
+		CachedRowSet crs = null;
+		ResultSet rt = null;
+		try {
+			Socket logSocket = new Socket(serverIP, 6669);
+			TransInputStream = new ObjectInputStream(logSocket.getInputStream());
+			crs = (CachedRowSet) TransInputStream.readObject();
+			rt = crs.getOriginal();
+			TransInputStream.close();
+		} catch (Exception e) {
+			System.out.println("Failed");
+		}
+
 		MatchedTableModel transModel = new MatchedTableModel(
-				transportService.readTransResult(), 0
+				rt, 0
 		);
+
 		JTable transTable = new JTable(transModel);
 		scrollPane = new JScrollPane(transTable);
 		showPane.addTab("物流", scrollPane);

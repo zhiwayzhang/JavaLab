@@ -56,7 +56,7 @@ public class MatchedTableModel extends AbstractTableModel {
 
 	// 获取表头信息
 	public String getColumnName(int column) {
-		String[] logArray = { "日志ID", "采集时间", "采集地点", "状态", "用户名", "IP", "日志类型" };
+		String[] logArray = { "用户名", "登陆时间", "登出时间" ,"登陆地点"};
 		String[] tranArray = { "物流ID", "采集时间", "目的地", "状态", "经手人", "收货人",
 				"物流类型" };
 		return sign == 1 ? logArray[column] : tranArray[column];
